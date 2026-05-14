@@ -1,4 +1,5 @@
 ```{python}
+#| output: false
 
 import kagglehub
 import os
@@ -6,6 +7,15 @@ import time
 import glob
 from os import listdir
 from os.path import isfile, join
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+import pandas as pd
+import re
+import tensorflow as tf
+from tensorflow.keras import datasets, layers, models
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
+from IPython.display import Image
 
 ```
 
@@ -18,7 +28,7 @@ https://www.kaggle.com/datasets/andrewmvd/leukemia-classification?select=C-NMC_L
 Train Data Prep
 
 ```{python}
-
+#| output: false
 path = kagglehub.dataset_download("andrewmvd/leukemia-classification")
 
 print("Path to dataset files:", path)
@@ -60,8 +70,6 @@ len(train_healthy)
 EDA of training data
 
 ```{python}
-
-import matplotlib.pyplot as plt
 
 cancer_length = len(train_cancer)
 healthy_length = len(train_healthy)
@@ -105,8 +113,6 @@ I will also graph some of the images so you can get an idea of what we are worki
 
 ```{python}
 
-import matplotlib.image as img
-
 fig = plt.figure(figsize=(10,10))
 fig.suptitle('Cancer', fontsize=26, fontweight='bold')
 
@@ -146,9 +152,6 @@ This data set is unqiue as there are only 118 individuals (before the private te
 Now I can use some regex to make a new dataframe that adds the data from the file path. I also have to change the IDs, as the same ID is reused between the two data sets!
 
 ```{python}
-
-import pandas as pd
-import re
 
 df_health = pd.DataFrame(train_healthy)
 
@@ -226,6 +229,7 @@ h2listbreak = list(h2_breakup["Patient"])
 Loop to break groups with a minimum of 100 in each group that have more than 200 images. This is used way later in the demo, and I had other ideas for it that didn't work out. Feel free to kinda skip over this it can be a headache to follow. 
 
 ```{python}
+#| output: false
 
 for i in h1listbreak:
     count = h1.loc[h1["Patient"] == i, "count"].values[0]
@@ -248,7 +252,8 @@ for i in h1listbreak:
 
 
 ```{python}
-
+#| output: false
+ 
 for i in h2listbreak:
     count = h2.loc[h2["Patient"] == i, "count"].values[0]
     max_index = max(df_cancer[df_cancer["Patient"] == i].index)
@@ -271,6 +276,7 @@ for i in h2listbreak:
 Resetting the IDs
 
 ```{python}
+#| output: false
 
 df_health["Cancer"] = 0
 df_cancer["Cancer"] = 1
@@ -331,11 +337,7 @@ We use data augmentation in order to help stop overfitting. It is a difficult pr
 Also the model weights are randomized. Our best validation AUC was slightly above .7, and your outcome may slighlty vary. In a real world setting we probably wouldnt want this randomization and I instead would share my best model!
 
 ```{python}
-
-import tensorflow as tf
-from tensorflow.keras import datasets, layers, models
-import matplotlib.pyplot as plt
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+#| eval: false
 
 datagen_train = ImageDataGenerator(
     rescale=1./255,
@@ -374,6 +376,7 @@ val_gen = datagen_val.flow_from_dataframe(
 Here we have 2 hidden layers, in a pretty standard CNN. It uses batchnormalization, has 32 filters and a 6x6 size, then 64 filters with a 4x4 size. It uses a pretty high drop out of .5 to help with overfitting. It also uses Batchnormalization and Maxpooling (2,2) on both hidden layers. This is to make the model run faster as I am running it on an 8 gb laptop. It also uses a leakyrelu activation fucntion whihc allows for slighlty negative values to be passed through, helping with the dying relu problem. 
 
 ```{python}
+#| eval: false
 
 model = models.Sequential([
     layers.Conv2D(32, (6,6), input_shape=(64, 64, 3)),
@@ -402,6 +405,7 @@ model.summary()
 We evaluate on AUC, and slowly decrease the learning rate as the model is better fit. It has an early stopping of 10, with 50 epochs, a learning rate of .0001, whihc is halved every 3 epochs with no improvement.  
 
 ```{python}
+#| eval: false
 
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
@@ -439,6 +443,7 @@ history = model.fit(
 Here we plto the AUC to see if the model is overfitting or the validation AUC is tracking. 
 
 ``` {python}
+#| eval: false
 
 plt.figure(figsize=(12, 6))
 plt.plot(history.history['auc'], label='Train AUC')
@@ -452,12 +457,16 @@ plt.show()
 
 ```
 
+```{python}
+
+Image("./AUC Graph.png")
+
+```
+
 Here we get the confusion matrix, which I love to look at! It always makes it way clearer what is going on for me. 
 
 ```{python}
-
-from sklearn.metrics import accuracy_score, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay
-import pandas as pd
+#| eval: false
 
 # model = tf.keras.models.load_model('./Model_Basic.keras')
 # df_val = pd.read_csv("./Validation_Data.csv")
@@ -494,9 +503,16 @@ plt.show()
 
 ```
 
+```{python}
+
+Image("./ConfusionMatrix.png")
+
+```
+
 Feel free to ignore this, this is for the demoes later!
 
 ```{python}
+#| eval: false
 
 df_combined.to_csv("All_Train_Data.csv", index = False, header = True)
 df_val.to_csv("Validation_Data.csv", index = False, header = True)

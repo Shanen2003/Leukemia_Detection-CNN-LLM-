@@ -66,6 +66,7 @@ plt.show()
 Here we import our earlier trained model. 
 
 ```{python}
+#| output: false
 
 import tensorflow as tf
 
@@ -78,7 +79,8 @@ df_both = pd.concat([df_Has_Cancer, df_No_Cancer])
 Here we predict on the two patients we have added. 
 
 ```{python}
-
+#| output: false
+#| 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 datagen_val = ImageDataGenerator(
@@ -207,6 +209,7 @@ plt.show()
 This is a check that the local model works (it does!).
 
 ```{python}
+#| eval: false
 
 import ollama
 
@@ -221,9 +224,10 @@ print(response['message']['content'])
 
 ```
 
-These are the files I used on the demo. I chose them as one has cnacer and oen does not, and btoh are decently sized. If I uploaded all files, the streamlti woudl take forever!
+These are the files I used on the demo. I chose them as one has cancer and one does not, and both are decently sized. If I uploaded all files, the streamlit would take forever!
 
 ```{python}
+#| eval: false
 
 df_Has_Cancer.to_csv("Cancer_Demo.csv", index = False, header = True)
 
