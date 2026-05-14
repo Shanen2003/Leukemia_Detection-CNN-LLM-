@@ -1,6 +1,7 @@
 ## My Leukemia Detection Project :D
 
-Video Breakdown: 
+Video Breakdown: https://youtu.be/vXWVIPjk69c
+(Watch in 1.5x)
 
 Each file will have a brief breakdown of what it does, and its use! These are only the final products, but if you have any other questions on how I came to certain decisions, please ask! My LinkedIn & email are in my bio. 
 
