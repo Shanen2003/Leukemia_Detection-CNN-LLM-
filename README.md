@@ -1,4 +1,4 @@
-## My Leukemia Detection Project :D
+## My Leukemia Detection Project 
 
 Video Breakdown: https://youtu.be/vXWVIPjk69c
 (Watch in 1.5x)
@@ -59,6 +59,4 @@ This also originally had a .md file loaded in, which did not help. Eventually, a
 # App
 
 Finally, we have the streamlit, which is the front-end UI for clinicians. The agent can still be kinda finnicky, so I woudl suggest saying which patient I ayou are asking about. I would also suggest using the drop-down on the left, selecting which ID as well. It is pretty cool to just say you want analysis and have it give you the yes/no for Leukemia, then give the heatmap. I would also strongly recommend using the datasets of one individual (2 and 86). 
-
-
 
